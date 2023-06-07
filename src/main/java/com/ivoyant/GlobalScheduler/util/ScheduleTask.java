@@ -28,6 +28,9 @@ public class ScheduleTask {
     @Autowired
     private ScheduleServiceImpl scheduleService;
 
+    @Autowired
+    private DateModifier dateModifier;
+
     @Scheduled(fixedRate = 10000)
     public void executeTask() {
         List<Config> config = scheduleService.getAllSchedule();
@@ -37,7 +40,7 @@ public class ScheduleTask {
                 try {
                     CronExpression cron = new CronExpression(expression);
                     Date nextRun = cron.getNextValidTimeAfter(new Date());
-                    LocalDateTime nextRunDateTime = nextRun.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                    Date nextRunDateTime = dateModifier.formatDateOnZone(nextRun, config1.getZoneId());
                     System.out.println("Next run: " + nextRunDateTime);
                     config1.setNextRun(nextRunDateTime);
                 } catch (Exception e) {

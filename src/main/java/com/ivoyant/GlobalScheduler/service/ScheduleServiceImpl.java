@@ -2,13 +2,12 @@ package com.ivoyant.GlobalScheduler.service;
 
 import com.ivoyant.GlobalScheduler.Model.Config;
 import com.ivoyant.GlobalScheduler.Repo.ScheduleRepo;
+import com.ivoyant.GlobalScheduler.util.DateModifier;
+import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
-import org.quartz.CronExpression;
 
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -19,15 +18,18 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Autowired
     public ScheduleRepo scheduleRepo;
 
+    @Autowired
+    private DateModifier dateFormat;
 
     @Override
     public Config create(Config config) {
-        config.setCreatedTime(LocalDateTime.now());
+        Date createDate = dateFormat.formatDateOnZone(new Date(),config.getZoneId());
+        config.setCreatedTime(createDate);
         String expression = config.getCron_expression();
         try {
             CronExpression cron = new CronExpression(expression);
             Date nextRun = cron.getNextValidTimeAfter(new Date());
-            LocalDateTime nextRunDateTime = nextRun.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            Date nextRunDateTime = dateFormat.formatDateOnZone(nextRun,config.getZoneId());
             System.out.println("Next run: " + nextRunDateTime);
             config.setNextRun(nextRunDateTime);
         }
@@ -41,12 +43,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public Optional<Config> getSchedule(int id) {
         Optional<Config> config=scheduleRepo.findById(id);
-        String expression = config.get().getCron_expression();
-//        CronExpression cronTrigger = CronExpression.parse(expression);
-//        LocalDateTime next = cronTrigger.next(LocalDateTime.now());
-//        config.get().setNextRun(next);
-//        Config config1 = config.get();
-//        scheduleRepo.save(config1);
+        config.get().getCreatedTime();
         return scheduleRepo.findById(id);
     }
 

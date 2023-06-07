@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @Entity
@@ -28,12 +29,17 @@ public class Config {
     private String targetType;
     @JsonProperty("cron_expression")
     private String cron_expression;
+    @JsonProperty("zoneId")
+    private String zoneId;
     @JsonProperty("createdTime")
-    private LocalDateTime createdTime;
+    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private Date createdTime;
     @JsonProperty("lastRun")
-    private LocalDateTime lastRun;
+    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private Date lastRun;
     @JsonProperty("nextRun")
-    private LocalDateTime nextRun;
+    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private Date nextRun;
     @JsonProperty("state")
     private SchedulerState state = SchedulerState.CREATED;
 

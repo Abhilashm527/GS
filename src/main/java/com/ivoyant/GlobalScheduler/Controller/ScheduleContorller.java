@@ -33,7 +33,7 @@ public class ScheduleContorller {
             @ApiResponse(code = 404, message = "The given ID doesn't have any schedule configurations")
     })
     @GetMapping("/createschedule/{id}")
-    public ResponseEntity createdSchedule(@PathVariable(name = "id") int id) {
+    public ResponseEntity getScheduleById(@PathVariable(name = "id") int id) {
         Optional<Config> config = scheduleService.getSchedule(id);
         if (config.isEmpty())
             return ResponseEntity.ok("The given id doesn't have any Schedule configs");
